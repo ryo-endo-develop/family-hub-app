@@ -63,6 +63,9 @@ try:
     print("Attempting to import models...")
     import app.models.family  # noqa: F401
     import app.models.family_membership  # noqa: F401
+    import app.models.label  # noqa: F401 # 追加
+    import app.models.task  # noqa: F401 # 追加
+    import app.models.task_label  # noqa: F401 # 追加
     import app.models.user  # noqa: F401
 
     # 他のモデルも後でここに追加
