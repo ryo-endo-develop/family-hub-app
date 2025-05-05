@@ -4,7 +4,7 @@ services:
     container_name: familyhubapp_backend
     # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # DockerfileのCMDで指定済
     volumes:
-      - ./app:/app/app # ローカルのappディレクトリをコンテナの/app/appにマウント (コード変更の即時反映)
+      - .:/app
     ports:
       - "8000:8000" # ローカルの8000番ポートをコンテナの8000番ポートに接続
     environment:
