@@ -1,0 +1,41 @@
+[tool.ruff]
+# 対象とするPythonバージョンを指定 (Dockerfileに合わせる)
+target-version = "py311"
+
+# 有効にするLintルールのセットを選択
+# E/F/W: 基本的なエラー/警告 (pycodestyle, Pyflakes)
+# I: import文のソート (isort)
+# UP: よりモダンなPython記法への自動アップグレード提案
+# B: バグの可能性があるコードの検出 (flake8-bugbear)
+# SIM: よりシンプルな書き方への提案 (flake8-simplify)
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+# 特定のルールを無視したい場合はここに追加 (例: ["E501"])
+# ignore = []
+
+# 1行の最大文字数
+line-length = 88
+
+# チェック/フォーマット対象から除外するディレクトリやファイル
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+    ".env",
+    ".ruff_cache",
+    # 必要に応じて他の除外対象を追加
+]
+
+[tool.ruff.lint.isort]
+# import文のソート設定: 'app' ディレクトリを自分のコードとして認識させる
+known-first-party = ["app"]
+
+[tool.ruff.format]
+# Formatter (Black互換スタイルに近い設定)
+quote-style = "double"         # 文字列はダブルクォート "
+indent-style = "space"         # インデントはスペース
+skip-magic-trailing-comma = false # 末尾カンマを省略しない
+line-ending = "auto"           # 改行コードは自動

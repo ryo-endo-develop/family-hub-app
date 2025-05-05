@@ -1,0 +1,37 @@
+services:
+  backend:
+    build: . # カレントディレクトリのDockerfileを使ってビルド
+    container_name: familyhubapp_backend
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload # DockerfileのCMDで指定済
+    volumes:
+      - ./app:/app/app # ローカルのappディレクトリをコンテナの/app/appにマウント (コード変更の即時反映)
+    ports:
+      - "8000:8000" # ローカルの8000番ポートをコンテナの8000番ポートに接続
+    environment:
+      # .envファイルから読み込んだ値を使ってデータベース接続URLを構築
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_SERVER}:${POSTGRES_PORT}/${POSTGRES_DB}
+      # 他に必要な環境変数があればここに追加 (例: SECRET_KEY: ${SECRET_KEY})
+    depends_on:
+      - db # dbサービスが起動準備完了してからbackendを起動
+    env_file:
+      - .env # .envファイルを読み込んで環境変数として設定
+
+  db:
+    image: postgres:15-alpine # PostgreSQL 15 の軽量イメージを使用
+    container_name: familyhubapp_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/ # 名前付きボリュームでDBデータを永続化
+    expose:
+      - 5432 # コンテナ間通信用にポートを開放 (backendからのみアクセス想定)
+    # ports: # ホストPCからDBツールで直接接続したい場合はコメントアウトを外す
+    #   - "5433:5432" # ローカルの5433番ポートをコンテナの5432番ポートに接続
+    environment:
+      # .envファイルから読み込む
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - .env
+
+volumes:
+  postgres_data: # DBデータ永続化用の名前付きボリューム定義
