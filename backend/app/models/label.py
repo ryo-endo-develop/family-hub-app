@@ -36,9 +36,15 @@ class Label(SQLModel, table=True):
     # このラベルが属するFamily (Many-to-One)
     family: "Family" = Relationship(back_populates="labels")
     # このラベルを作成したUser (Many-to-One)
-    creator: Optional["User"] = Relationship(back_populates="created_labels")
+    creator: Optional["User"] = Relationship(
+        back_populates="created_labels",
+        sa_relationship_kwargs={"foreign_keys": "Label.created_by_id"},
+    )
     # このラベルを最後に更新したUser (Many-to-One)
-    updater: Optional["User"] = Relationship(back_populates="updated_labels")
+    updater: Optional["User"] = Relationship(
+        back_populates="updated_labels",
+        sa_relationship_kwargs={"foreign_keys": "Label.updated_by_id"},
+    )
     # このラベルが付けられたTaskのリスト (Many-to-Many)
     tasks: List["Task"] = Relationship(back_populates="labels", link_model=TaskLabel)
 

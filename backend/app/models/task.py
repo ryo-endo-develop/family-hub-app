@@ -62,13 +62,25 @@ class Task(SQLModel, table=True):
 
     # --- Relationships ---
     family: "Family" = Relationship(back_populates="tasks")
-    assignee: Optional["User"] = Relationship(back_populates="assigned_tasks")
-    creator: Optional["User"] = Relationship(back_populates="created_tasks")
-    updater: Optional["User"] = Relationship(back_populates="updated_tasks")
-    # 自己参照リレーションシップ (親タスク)
+    assignee: Optional["User"] = Relationship(
+        back_populates="assigned_tasks",
+        sa_relationship_kwargs={"foreign_keys": "Task.assignee_id"},
+    )
+    creator: Optional["User"] = Relationship(
+        back_populates="created_tasks",
+        sa_relationship_kwargs={"foreign_keys": "Task.created_by_id"},
+    )
+    updater: Optional["User"] = Relationship(
+        back_populates="updated_tasks",
+        sa_relationship_kwargs={"foreign_keys": "Task.updated_by_id"},
+    )
+    # 自己参照: remote_sideは文字列、foreign_keysはクラス属性リスト
     parent_task: Optional["Task"] = Relationship(
         back_populates="subtasks",
-        sa_relationship_kwargs=dict(remote_side="Task.id"),  # 自己参照の場合に指定
+        sa_relationship_kwargs={
+            "remote_side": "Task.id",
+            "foreign_keys": "Task.parent_task_id",
+        },
     )
     # 自己参照リレーションシップ (サブタスクリスト)
     subtasks: List["Task"] = Relationship(back_populates="parent_task")

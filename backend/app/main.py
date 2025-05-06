@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 
+from app.routers.api_v1.api import api_router
+
 # FastAPIアプリケーションインスタンスを作成
-app = FastAPI(title="FamilyHubApp API")
+app = FastAPI(title="FamilyHubApp API", version="0.1.0")
+app.include_router(api_router, prefix="/api/v1")
 
 
 # ルートエンドポイント (動作確認用)
