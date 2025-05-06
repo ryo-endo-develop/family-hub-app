@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import List, Sequence
 
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -32,6 +32,24 @@ async def get_labels_by_family(
     )
     result = await db.exec(statement)
     labels = result.all()
+    return labels
+
+
+async def get_labels_by_ids_and_family(
+    db: AsyncSession, *, label_ids: List[int], family_id: int
+) -> Sequence[Label]:
+    """
+    指定されたIDリストに該当し、かつ指定された家族に属するラベルのリストを取得する。
+    """
+    if not label_ids:  # IDリストが空なら空リストを返す
+        return []
+    statement = select(Label).where(
+        Label.id.in_(label_ids),  # IDがリストに含まれるか
+        Label.family_id == family_id,  # かつ、指定された家族に属するか
+    )
+    result = await db.exec(statement)
+    labels = result.all()
+    # 必要であれば、見つかったラベルの数と要求されたIDの数が一致するかチェックしても良い
     return labels
 
 

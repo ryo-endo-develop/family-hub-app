@@ -22,7 +22,7 @@ class UserBase(SQLModelBase):
     name: Optional[str] = Field(default=None, min_length=1, max_length=100)
     # OIDCでは 'picture' という名前の場合があるので validation_alias を使う
     avatar_url: Optional[HttpUrl] = Field(
-        default=None, validation_alias="picture"
+        default=None,
     )  # HttpUrlでURL形式をバリデーション
 
 
