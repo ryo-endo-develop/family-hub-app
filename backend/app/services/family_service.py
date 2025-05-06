@@ -9,6 +9,8 @@ from app.models.family_membership import MembershipRole
 from app.models.user import User
 from app.schemas.family import FamilyCreate
 
+from .common import check_user_family_membership_or_raise
+
 logger = logging.getLogger(__name__)
 
 
@@ -57,22 +59,17 @@ async def get_family_for_user_or_404(
     指定されたIDの家族を取得する。ユーザーがメンバーでない場合は403エラー。
     家族が存在しない場合は404エラー。
     """
+    # 認可チェック
+    await check_user_family_membership_or_raise(
+        db, user_id=user.id, family_id=family_id
+    )
+
     # 1. 家族を取得
     db_family = await crud_family.get_family(db, family_id=family_id)
     if db_family is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Family not found",
-        )
-
-    # 2. ユーザーがメンバーかチェック (認可)
-    is_member = await crud_membership.is_user_member(
-        db, user_id=user.id, family_id=family_id
-    )
-    if not is_member:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to access this family",
         )
 
     return db_family
