@@ -139,6 +139,43 @@
 1.  VSCode 拡張機能「Ruff (`charliermarsh.ruff`)」をインストールします。
 2.  推奨される設定は、プロジェクト内の `.vscode/settings.json` に記述されています。これにより、ファイル保存時に自動でフォーマットと Lint 修正が実行されます。
 
+## テストの実行
+
+本プロジェクトでは `pytest` を使用してテストを実行します。テストは Docker コンテナ内で実行してください。
+
+1.  **全てのテストを実行:**
+    プロジェクトルートで以下のコマンドを実行します。
+
+    ```bash
+    docker compose exec backend pytest tests
+    ```
+
+    または、(`pytest.ini` で `testpaths=tests` を設定していれば) 以下でも実行可能です。
+
+    ```bash
+    docker compose exec backend pytest
+    ```
+
+2.  **詳細な出力表示:**
+    `-s` (print 文の表示), `-v` (詳細表示), `-vv` (さらに詳細表示) オプションを追加できます。テストが失敗した場合やデバッグログを確認したい場合に便利です。
+
+    ```bash
+    docker compose exec backend pytest -svv tests
+    ```
+
+3.  **特定のファイル/関数のみ実行:**
+    特定のテストだけを実行したい場合は、パスや関数名を指定します。
+
+    ```bash
+    # 特定のファイルを実行
+    docker compose exec backend pytest tests/routers/test_families.py
+
+    # 特定の関数を実行
+    docker compose exec backend pytest tests/routers/test_families.py::test_create_family_success
+    ```
+
+テストは、`tests/conftest.py` の設定により、関数ごとに独立したインメモリ SQLite データベースを使用して実行されます。
+
 ## データベースへの接続
 
 開発中に直接データベースの内容を確認したい場合は、以下の方法があります。
